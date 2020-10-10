@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Spring Boot aws lambda.
+Globals:
+  Api:
+    EndpointConfiguration: REGIONAL
+  Function:
+    Environment:
+      Variables:
+        FUNCTION_NAME: orders
+Resources:
+  SpringBootAwsLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.javatechie.aws.lambda.OrderHandler
+      Runtime: java8
+      CodeUri: s3://wilsonfsbucket/f6dfee6e8dd7d52b3c5f0b3d1f4eb27c
+      MemorySize: 1512
+      Policies: AWSLambdaBasicExecutionRole
+      Timeout: 60
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /order
+            Method: any
