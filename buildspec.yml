@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto8
+    commands:
+      # Upgrade AWS CLI to the latest version
+      - pip install --upgrade awscli
+  pre_build:
+    commands:
+      - echo Test started on `date`
+      - mvn clean compile test
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn package shade:shade
+      - mv target/sprinboot-aws-lambda.jar .
+      - unzip sprinboot-aws-lambda.jar
+      - rm -rf target tst src buildspec.yml pom.xml sprinboot-aws-lambda.jar
+      - aws cloudformation package --template sam.yml --s3-bucket $S3_BUCKET --output-template output-sam.yml
+  post_build:
+    commands:
+     
+artifacts:
+  files:
+    - output-sam.yml
+    - template-configuration.json
